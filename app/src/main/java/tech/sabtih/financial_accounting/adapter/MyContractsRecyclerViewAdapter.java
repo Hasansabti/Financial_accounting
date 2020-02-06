@@ -5,12 +5,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import tech.sabtih.financial_accounting.R;
 import tech.sabtih.financial_accounting.dummy.DummyContent.DummyItem;
 import tech.sabtih.financial_accounting.listeners.OnContractInteractionListener;
 import tech.sabtih.financial_accounting.models.Contract;
+import tech.sabtih.financial_accounting.models.User;
 
 import java.util.List;
 
@@ -21,10 +24,10 @@ import java.util.List;
  */
 public class MyContractsRecyclerViewAdapter extends RecyclerView.Adapter<MyContractsRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Contract> mValues;
+    private final List<User> mValues;
     private final OnContractInteractionListener mListener;
 
-    public MyContractsRecyclerViewAdapter(List<Contract> items, OnContractInteractionListener listener) {
+    public MyContractsRecyclerViewAdapter(List<User> items, OnContractInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -41,6 +44,9 @@ public class MyContractsRecyclerViewAdapter extends RecyclerView.Adapter<MyContr
         holder.mItem = mValues.get(position);
        // holder.mIdView.setText(mValues.get(position).id);
        // holder.mContentView.setText(mValues.get(position).content);
+        holder.mName.setText(holder.mItem.getName());
+        holder.mAmount.setText("0");
+
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,7 +54,7 @@ public class MyContractsRecyclerViewAdapter extends RecyclerView.Adapter<MyContr
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onContractClick(holder.mItem);
+                    mListener.onUserClick(holder.mItem);
                 }
             }
         });
@@ -61,20 +67,31 @@ public class MyContractsRecyclerViewAdapter extends RecyclerView.Adapter<MyContr
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public Contract mItem;
+        public final ImageView Bview;
+        public final TextView mName;
+        public final TextView mCount;
+        public final TextView mAmount;
+        public final ImageView Ttype;
+
+
+        public User mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+
+            Bview =  view.findViewById(R.id.bShow);
+            mName = (TextView) view.findViewById(R.id.muser);
+            mCount = view.findViewById(R.id.mcount);
+            mAmount = view.findViewById(R.id.mmoney);
+            Ttype = view.findViewById(R.id.mType);
+
+
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mName.getText() + "'";
         }
     }
 }

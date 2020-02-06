@@ -18,11 +18,23 @@
     <string name="ufor">له:</string>
     <string name="uon">عليه:</string>
 
+    <string name="dfor">له</string>
+    <string name="don">عليه</string>
+
     <string name="bal_for">الرصيد له:</string>
     <string name="bal_on">الرصيد عليه:</string>
     <string name="balance">الرصيد:</string>
 
     <string name="contracts">العقود</string>
+    <string name="add">اضافة</string>
+    <string name="cancel">الغاء</string>
+    <string name="addaccount">اضافة حساب جديد</string>
+    <string name="accountname">اسم الحساب</string>
+    <string name="amount">المبلغ</string>
+    <string name="add_close">حفظ</string>
+    <string name="phone">رقم الجوال</string>
+    <string name="details">تفاصيل</string>
+    <string name="name_too_short">Name is too short</string>
 
 
 </resources>
