@@ -24,18 +24,21 @@ import tech.sabtih.financial_accounting.R;
 import tech.sabtih.financial_accounting.adapter.MyContractsRecyclerViewAdapter;
 import tech.sabtih.financial_accounting.fragments.AddAccountDialog;
 import tech.sabtih.financial_accounting.listeners.OnContractInteractionListener;
+import tech.sabtih.financial_accounting.listeners.OnListInteractionListener;
 import tech.sabtih.financial_accounting.models.Contract;
 import tech.sabtih.financial_accounting.models.User;
 import tech.sabtih.financial_accounting.utils.AccountingDbHelper;
 import tech.sabtih.financial_accounting.utils.UserEntry;
 
-public class HomeFragment extends Fragment implements OnContractInteractionListener {
+public class HomeFragment extends Fragment implements OnContractInteractionListener, View.OnLongClickListener {
 
     private HomeViewModel homeViewModel;
 
     RecyclerView contracts;
     ImageButton addacc;
     MyContractsRecyclerViewAdapter adapter;
+
+    OnListInteractionListener mListener;
 
     AccountingDbHelper dbhelper;
 
@@ -47,6 +50,8 @@ public class HomeFragment extends Fragment implements OnContractInteractionListe
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+
+        mListener = (OnListInteractionListener) getActivity();
 
         dbhelper = AccountingDbHelper.newInstance(getContext());
         SQLiteDatabase db = dbhelper.getReadableDatabase();
@@ -113,8 +118,56 @@ public class HomeFragment extends Fragment implements OnContractInteractionListe
     }
 
     @Override
+    public void onUserLongClick(User mItem) {
+        mListener.onSelectModeStarted();
+    }
+
+    @Override
     public void onUserCreated(User user) {
             users.add(user);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void selectionUpdated(int selected) {
+        mListener.onSelectionUpdated(selected);
+
+        if(selected == 0){
+            adapter.setSelectionmode(false);
+        }
+    }
+
+
+    @Override
+    public boolean onLongClick(View v) {
+
+        return false;
+    }
+
+    public void selectionCanceled() {
+        adapter.setSelectionmode(false);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void deleteSelected() {
+        ArrayList<User> deleted = new ArrayList<>();
+        for(User user : users){
+            if(user.isSelected()){
+                deleted.add(user);
+            }
+        }
+        SQLiteDatabase db = dbhelper.getWritableDatabase();
+        for(User user : deleted){
+            users.remove(user);
+
+            db.execSQL("delete from "+UserEntry.TABLE_NAME.getText()+" where "+UserEntry.COLUMN_ID.getText() +" = '" +user.getUid()+"'");
+
+        }
+
+        adapter.setSelected(adapter.getSelected()-deleted.size());
+
+        adapter.notifyDataSetChanged();
+        adapter.setSelectionmode(false);
+        mListener.onSelectModeEnded();
     }
 }

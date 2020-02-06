@@ -1,14 +1,14 @@
 package tech.sabtih.financial_accounting;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -22,15 +22,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.TextView;
 
-import java.util.UUID;
+import tech.sabtih.financial_accounting.listeners.OnListInteractionListener;
+import tech.sabtih.financial_accounting.ui.home.HomeFragment;
 
-import tech.sabtih.financial_accounting.utils.AccountingDbHelper;
-import tech.sabtih.financial_accounting.utils.UserEntry;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnListInteractionListener {
 
     private AppBarConfiguration mAppBarConfiguration;
+    boolean selectionmode = false;
 
 
 
@@ -68,19 +68,91 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        if (selectionmode) {
+            getMenuInflater().inflate(R.menu.main_selection, menu);
+        }else {
+            getMenuInflater().inflate(R.menu.main, menu);
+        }
         return true;
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+        if(selectionmode){
+
+            HomeFragment homef = (HomeFragment) getSupportFragmentManager().getPrimaryNavigationFragment().getChildFragmentManager().getFragments().get(0);
+            homef.selectionCanceled();
+
+            onSelectModeEnded();
+            return true;
+
+        }else {
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+            return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                    || super.onSupportNavigateUp();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.delete_users){
+            HomeFragment homef = (HomeFragment) getSupportFragmentManager().getPrimaryNavigationFragment().getChildFragmentManager().getFragments().get(0);
+            homef.deleteSelected();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSelectModeStarted() {
+        selectionmode = true;
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.GONE);
+
+        Toolbar toolbar_select = findViewById(R.id.toolbar_selection);
+        toolbar_select.setVisibility(View.VISIBLE);
+
+
+
+        setSupportActionBar(toolbar_select);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
+        invalidateOptionsMenu();
+        getMenuInflater().inflate(R.menu.main_selection,toolbar_select.getMenu());
+
+    }
+
+    @Override
+    public void onSelectModeEnded() {
+        selectionmode = false;
+        Toolbar toolbar_select = findViewById(R.id.toolbar_selection);
+        toolbar_select.setVisibility(View.GONE);
+
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.VISIBLE);
+
+
+        setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public void onSelectionUpdated(int selected) {
+        if(selectionmode){
+            TextView tvcount = findViewById(R.id.selected_count);
+
+            tvcount.setText(""+selected);
+
+            if(selected == 0){
+                onSelectModeEnded();
+            }
+        }
+
     }
 }

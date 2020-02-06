@@ -8,14 +8,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import tech.sabtih.financial_accounting.R;
-import tech.sabtih.financial_accounting.dummy.DummyContent.DummyItem;
 import tech.sabtih.financial_accounting.listeners.OnOrderInteractListener;
 import tech.sabtih.financial_accounting.models.Order;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Order} and makes a call to the
  * specified {@link OnOrderInteractListener}.
  * TODO: Replace the implementation with code for your data type.
  */

@@ -35,6 +35,7 @@
     <string name="phone">رقم الجوال</string>
     <string name="details">تفاصيل</string>
     <string name="name_too_short">Name is too short</string>
+    <string name="delete">Delete</string>
 
 
 </resources>

@@ -5,6 +5,7 @@ public class User {
 
     String uid;
     String name,phone;
+    boolean isSelected = false;
 
     public User(String uid, String name, String phone) {
         this.uid = uid;
@@ -34,5 +35,13 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

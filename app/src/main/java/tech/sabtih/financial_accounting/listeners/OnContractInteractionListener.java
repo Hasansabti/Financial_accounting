@@ -8,6 +8,9 @@ public interface OnContractInteractionListener {
      void onContractClick(Contract contract);
 
     void onUserClick(User mItem);
+    void onUserLongClick(User mItem);
 
     void onUserCreated(User user);
+
+    void selectionUpdated(int selected);
 }

@@ -34,5 +34,6 @@
     <string name="phone">Phone</string>
     <string name="details">Details</string>
     <string name="name_too_short">Name is too short</string>
+    <string name="delete">Delete</string>
 
 </resources>

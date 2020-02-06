@@ -2,23 +2,22 @@ package tech.sabtih.financial_accounting.adapter;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import tech.sabtih.financial_accounting.R;
-import tech.sabtih.financial_accounting.dummy.DummyContent.DummyItem;
 import tech.sabtih.financial_accounting.listeners.OnContractInteractionListener;
-import tech.sabtih.financial_accounting.models.Contract;
 import tech.sabtih.financial_accounting.models.User;
+import tech.sabtih.financial_accounting.ui.home.HomeFragment;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link User} and makes a call to the
  * specified {@link tech.sabtih.financial_accounting.listeners.OnContractInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
@@ -26,10 +25,31 @@ public class MyContractsRecyclerViewAdapter extends RecyclerView.Adapter<MyContr
 
     private final List<User> mValues;
     private final OnContractInteractionListener mListener;
+    private boolean selectionmode = false;
+
+    int selected = 0;
 
     public MyContractsRecyclerViewAdapter(List<User> items, OnContractInteractionListener listener) {
         mValues = items;
         mListener = listener;
+    }
+
+
+    public void setSelectionmode(boolean state){
+        selectionmode = state;
+        if(!state){
+            for(User user : mValues){
+                user.setSelected(false);
+            }
+        }
+    }
+
+    public int getSelected() {
+        return selected;
+    }
+
+    public void setSelected(int selected) {
+        this.selected = selected;
     }
 
     @Override
@@ -46,6 +66,25 @@ public class MyContractsRecyclerViewAdapter extends RecyclerView.Adapter<MyContr
        // holder.mContentView.setText(mValues.get(position).content);
         holder.mName.setText(holder.mItem.getName());
         holder.mAmount.setText("0");
+        if(selectionmode && holder.mItem.isSelected()){
+            holder.mView.setBackgroundColor(((HomeFragment)mListener ).getActivity().getColor(R.color.colorSelection) );
+        }else{
+            holder.mView.setBackgroundColor(Color.TRANSPARENT);
+
+        }
+
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                selectionmode = true;
+                mListener.onUserLongClick(holder.mItem);
+                holder.mItem.setSelected(true);
+                selected++;
+                mListener.selectionUpdated(selected);
+                notifyDataSetChanged();
+                return false;
+            }
+        });
 
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +94,22 @@ public class MyContractsRecyclerViewAdapter extends RecyclerView.Adapter<MyContr
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onUserClick(holder.mItem);
+
+                    if(selectionmode){
+                        if(holder.mItem.isSelected()){
+                            selected--;
+                            if(selected == 0){
+
+                            }
+                        }else{
+                            selected++;
+                        }
+                            holder.mItem.setSelected(!holder.mItem.isSelected());
+
+                        mListener.selectionUpdated(selected);
+                            notifyDataSetChanged();
+
+                    }
                 }
             }
         });
@@ -72,6 +127,8 @@ public class MyContractsRecyclerViewAdapter extends RecyclerView.Adapter<MyContr
         public final TextView mCount;
         public final TextView mAmount;
         public final ImageView Ttype;
+
+
 
 
         public User mItem;
